@@ -27,8 +27,44 @@ public class Transaction {
     public String description;
 
     public Transaction(String accountNumber, Transactions transactionType, String description) {
+        if (accountNumber == null || accountNumber.isEmpty()) {
+            throw new IllegalArgumentException("Account number cannot be empty.");
+        }
         this.accountNumber = accountNumber;
         this.transactionType = transactionType;
         this.description = description;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public Transactions getTransactionType() {
+        return transactionType;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        if (accountNumber == null || accountNumber.isEmpty()) {
+            throw new IllegalArgumentException("Account number cannot be empty.");
+        }
+        this.accountNumber = accountNumber;
+    }
+
+    public void setTransactionType(Transactions transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Transaction{" +
+                "Account Number='" + accountNumber + '\'' +
+                ", Transaction Type=" + transactionType +
+                ", Description='" + description + '\'' +
+                '}';
     }
 }

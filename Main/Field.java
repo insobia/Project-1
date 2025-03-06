@@ -23,7 +23,8 @@ public class Field<T, E> {
     /**
      * Get the input value of this field.
      */
-    public T getFieldValue() {
+    public T getFieldValue()
+    {
         return this.fieldValue;
     }
 
@@ -34,6 +35,15 @@ public class Field<T, E> {
      * will only receive one String.
      * @param phrase Prompt used when asking for value for this field.
      */
+
+    public void setFieldValue(String phrase)
+    {
+        this.setFieldValue(phrase, true);
+    }
+
+
+
+
     public void setFieldValue(String phrase) {
         this.setFieldValue(phrase, true);
     }
@@ -52,6 +62,11 @@ public class Field<T, E> {
      * @throws NumberFormatException May happen when field is of type Double, Integer, or any number class,
      * and user suddenly inputs a String that cannot be cast into double or Integer.,
      */
+
+
+
+
+
     public void setFieldValue(String phrase, boolean inlineInput)
     throws ClassCastException, NumberFormatException {
         String tempval = null;

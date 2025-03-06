@@ -35,17 +35,41 @@ public class Main
                 setOption();
                 showMenu(getOption(), 1);
                 // TODO: Complete this portion
+
+                System.out.println("Logging in...");
             }
             // Bank Option
             else if (getOption() == 2)
             {
                 // TODO: Complete Bank option
+
+                showMenuHeader("Bank Services");
+                showMenu(3,1);
+                setOption();
+
+                if (getOption() == 1)
+                {
+                    System.out.println("Checking Balance...");
+                } else if (getOption() == 2)
+                {
+                    System.out.println("Processing a transaction...");
+                }
+                else
+                {
+                    System.out.println("Invalid choice for Bank Services");
+                }
             }
             // Create New Bank
             else if (getOption() == 3)
             {
                 // TODO: Complete this portion...
+
+                showMenuHeader("Create New Bank");
+                System.out.println("Enter your Bank Name");
+                String bankName = input.nextLine();
+                System.out.println("Bank " + bankName + "has created successfully!");
             }
+                //Exiting...
             else if (getOption() == 4)
             {
                 System.out.println("Exiting. Thank you for banking!");
