@@ -1,5 +1,5 @@
 package Savings;
-import Account.Account;
+import account.Account;
 import Accounts.Transaction;
 
 
@@ -22,10 +22,10 @@ public class SavingsAccountLauncher {
         account.addNewTransaction(account.accountNumber, Transaction.TransactionTyoe.WITHDRAWAL, "Withdrew of" + amount);
     }
 
-    public void transferFunds(Account sender, Account reciever, double amount)
+    public void transferFunds(Account sender, Account receiver, double amount)
     {
-        System.out.println("Transferred" + amount + "from" + sender.getOwnerFullName() + "to" + reciever.getOwnerFullName());
-        sender.addNewTransaction(sender.accountNumber, Transaction.TransactionsType.TRANSFER, " Transfer of " + amount + "to" + reciever.accountNumber);
-        reciever.addNewTransaction(reciever.accountNumber, Transaction.TransactionsType.RECEIVE, "Received" + amount + "from" + sender.accountNumber);
+        System.out.println("Transferred" + amount + "from" + sender.getOwnerFullName() + "to" + receiver.getOwnerFullName());
+        sender.addNewTransaction(sender.accountNumber, Transaction.TransactionsType.TRANSFER, " Transfer of " + amount + "to" + receiver.accountNumber);
+        receiver.addNewTransaction(receiver.accountNumber, Transaction.TransactionsType.RECEIVE, "Received" + amount + "from" + sender.accountNumber);
     }
 }

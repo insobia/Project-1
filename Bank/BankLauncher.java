@@ -1,6 +1,6 @@
 package Bank;
 
-import Account.Account;
+import account.Account;
 
 public class BankLauncher {
     public static void main (String[] args)
