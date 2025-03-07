@@ -1,30 +1,45 @@
-package Account;
-
-public class AccountLauncher {
-    public static void main(String[] args) {
-        //Create Accounts
-
-        Account acc1 = new Account("123456", "John Doe", 5000.0, "Savings");
-        Account acc2 = new Account("789012", "Alice Smith", 3000.0, "Checking");
+package account;
 
 
-        //display initial account details
+import Account.Account;
+import Bank.Bank;
+import Savings.SavingsAccount;
 
-        System.out.println("Initial Account Details: ");
-        System.out.println(acc1);
-        System.out.println(acc2);
-        System.out.println();
+public class AccountLauncher()
+{
+    private Account loggedAccount;
+    private Bank associatedBank;
 
-        //Perform Transaction
-        acc1.deposit(1000);
-        acc1.withdraw(2000);
-        acc1.transfer(acc2, 1500);
 
-        //Display Updated account details
-        System.out.println("\nUpdated Account Details: ");
-        System.out.println(acc1);
-        System.out.println(acc2);
-
+    public boolean isLoggedIn()
+    {
+        return loggedAccount != null;
     }
+
+    // Handle account login
+    public void accountLogin(String accountNumber, String pin)
+    {
+        // Normally, you'd check from a database or a list of accounts
+        if (accountNumber.equals("123456") && pin.equals("1234")) {
+            loggedAccount = new SavingsAccount(new Bank("MyBank"), "123456", "John", "Doe", "john@example.com", "1234");
+            System.out.println("Login successful!");
+        }
+        else
+        {
+            System.out.println("Invalid credentials.");
+        }
+    }
+
+    public void logout()
+    {
+        loggedAccount = null;
+    }
+
+    public Account getLoggedAccount()
+    {
+        return loggedAccount;
+    }
+
+
 
 }

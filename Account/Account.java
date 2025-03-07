@@ -1,118 +1,55 @@
 package Account;
-
-public class Account {
-    private String accountNumber;
-    private String accountHolderName;
-    private double balance;
-    private String accountType; //saving, checking ug unsa pa
-    private boolean isActive;
+import Accounts.Transaction;
+import java.util.ArrayList;
 
 
-    //Constructor
-    public Account(String accountNumber, String accountHolderName, double balance, String accountType) {
+
+public abstract class Account {
+    protected Bank bank;
+    protected String accountNumber;
+    protected String ownerFirstName, ownerLastName, ownerEmail;
+    protected String pin;
+    protected ArrayList<Transaction> transactions;
+
+
+    public Account(Bank bank, String accountNumber, String firsName, String lastName, String email, String pin)
+    {
+        this.bank = bank;
         this.accountNumber = accountNumber;
-        this.accountHolderName = accountHolderName;
-        this.balance = balance;
-        this.accountType = accountType;
-        this.isActive = true; // default to active
-
+        this.ownerEmail = email;
+        this.ownerFirstName = firsName;
+        this.ownerLastName = lastName;
+        this.pin = pin;
+        this.transactions = new ArrayList<>();
     }
 
-    //Deposit money
-    public void deposit(double amount)
+
+    public String getOwnerFullName()
     {
-        if (amount > 0) {
-            balance += amount;
-            System.out.println("Deposited: $" + amount);
-        }
-        else
+        return ownerFirstName + " " + ownerLastName;
+    }
+
+    public void addNewTransaction (String accountNumber, Transaction.TransactionType type, String description)
+    {
+        Transaction newTransaction = new Transaction(accountNumber, type, description);
+        transactions.add(newTransaction);
+    }
+
+
+    public String getTransactionInfo()
+    {
+        StringBuilder info = new StringBuilder("Transaction History:\n");
+        for (Transaction t : transactions)
         {
-            System.out.println("Invalid deposit amount.");
+            info.append(t.toString()).append("\n")
         }
-    }
-
-    //withdraw money
-    public boolean withdraw(double amount)
-    {
-        if (!isActive)
-        {
-            System.out.println("Account is inactive. Withdrawal failed");
-            return false;
-        }
-
-        if (amount > 0 && amount <= balance)
-        {
-            balance -= amount;
-            System.out.println("Withdrawn: $" + amount);
-            return true;
-        }
-        else
-        {
-            System.out.println("Insufficient balance or invalid amount");
-            return false;
-        }
-    }
-
-    //Transfer monet to another account
-
-    public boolean transfer (Account targetAccount, double amount)
-    {
-        if (withdraw(amount))
-        {
-            targetAccount.deposit(amount);
-            System.out.println("Transferred $" + amount + "to" + targetAccount.getAccountHolder());
-            return true;
-        }
-        return false;
-    }
-
-
-    //check balance
-    public double checkBalance()
-    {
-        return balance;
-    }
-
-
-    //getters
-    public String getAccountNumber()
-    {
-        return accountNumber;
-    }
-
-    public String getAccountHolder()
-    {
-        return accountHolderName;
-    }
-
-    public boolean isActive()
-    {
-        return isActive;
-    }
-
-    //Set account Status
-    public void deactivateAccount()
-    {
-        isActive = false;
-        System.out.println("Account has been deactivated");
-    }
-
-    public void activateAccount()
-    {
-        isActive = true;
-        System.out.println("Account has been activated");
+        return info.toString();
     }
 
     @Override
     public String toString()
     {
-        return "Account{" +
-                "accountNumber =' " +accountNumber + '\''+
-                ", accountHolderName = '" + accountHolderName + '\'' +
-                ", balance =" + balance +
-                ", accountType = '" + accountType + '\'' +
-                ", isActive = " + isActive +
-                '}';
+        return "Account Number: " + accountNumber + " | Owner: " + getOwnerFullName();
     }
-}
 
+}
