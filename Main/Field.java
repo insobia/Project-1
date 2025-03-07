@@ -44,10 +44,6 @@ public class Field<T, E> {
 
 
 
-    public void setFieldValue(String phrase) {
-        this.setFieldValue(phrase, true);
-    }
-
     /**
      * Set the value for this field. Can be validated using a validator.
      * @param phrase Prompt used when asking for value for this field.
