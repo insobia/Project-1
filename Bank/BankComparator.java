@@ -1,4 +1,3 @@
-package Bank;
 import java.util.Comparator;
 
 public class BankComparator implements Comparator<Bank> {
