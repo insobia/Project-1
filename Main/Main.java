@@ -1,182 +1,161 @@
 package Main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import Banking.Bank;
+import Banking.Account;
+import Banking.SavingsAccount;
+import Banking.CreditAccount;
+import Transactions.*;
 
-public class Main
-{
-
+public class Main {
     private static final Scanner input = new Scanner(System.in);
-    /**
-     * Option field used when selection options during menu prompts. Do not create a different
-     * option variable in menus. Just use this instead. <br>
-     * As to how to utilize Field objects properly, refer to the following:
-     * 
-     * @see #prompt(String, boolean)
-     * @see #setOption() How Field objects are used.
-     */
-    public static Field<Integer, Integer> option = new Field<Integer, Integer>("Option",
-            Integer.class, -1, new Field.IntegerFieldValidator());
+    private static List<Bank> banks = new ArrayList<>();
+    private static List<Account> accounts = new ArrayList<>();
+    
+    public static Field<Integer, Integer> option = new Field<>("Option", Integer.class, -1, new Field.IntegerFieldValidator());
 
-    public static void main(String[] args)
-    {
-        while (true)
-        {
+    public static void main(String[] args) {
+        while (true) {
             showMenuHeader("Main Menu");
             showMenu(1);
             setOption();
-            // Account Option
-            if (getOption() == 1)
-            {
-                // READ ME: Refer to this code block on how one should properly utilize
-                // showMenuHeader(), showMenu(),
-                // setOption(), and getOption() methods...
-                showMenuHeader("Account Login Menu");
-                showMenu(2, 1);
-                setOption();
-                showMenu(getOption(), 1);
-                // TODO: Complete this portion
 
-                System.out.println("Logging in...");
-            }
-            // Bank Option
-            else if (getOption() == 2)
-            {
-                // TODO: Complete Bank option
-
-                showMenuHeader("Bank Services");
-                showMenu(3,1);
-                setOption();
-
-                if (getOption() == 1)
-                {
-                    System.out.println("Checking Balance...");
-                } else if (getOption() == 2)
-                {
-                    System.out.println("Processing a transaction...");
+            switch (getOption()) {
+                case 1 -> loginAccount();
+                case 2 -> manageBank();
+                case 3 -> createBank();
+                case 4 -> {
+                    System.out.println("Exiting. Thank you for banking!");
+                    return;
                 }
-                else
-                {
-                    System.out.println("Invalid choice for Bank Services");
-                }
-            }
-            // Create New Bank
-            else if (getOption() == 3)
-            {
-                // TODO: Complete this portion...
-
-                showMenuHeader("Create New Bank");
-                System.out.println("Enter your Bank Name");
-                String bankName = input.nextLine();
-                System.out.println("Bank " + bankName + "has created successfully!");
-            }
-                //Exiting...
-            else if (getOption() == 4)
-            {
-                System.out.println("Exiting. Thank you for banking!");
-                break;
-            }
-            else
-            {
-                System.out.println("Invalid option!");
+                default -> System.out.println("Invalid option!");
             }
         }
     }
 
-    /**
-     * Show menu based on index given. <br>
-     * Refer to Menu enum for more info about menu indexes. <br>
-     * Use this method if you want a single menu option every line.
-     * 
-     * @param menuIdx Main.Menu index to be shown
-     */
-    public static void showMenu(int menuIdx)
-    {
+    private static void loginAccount() {
+        showMenuHeader("Account Login Menu");
+        System.out.print("Enter Account Number: ");
+        String accNumber = input.nextLine();
+
+        Account account = findAccount(accNumber);
+        if (account == null) {
+            System.out.println("Account not found!");
+            return;
+        }
+
+        System.out.println("Login successful!");
+        manageAccount(account);
+    }
+
+    private static void manageBank() {
+        showMenuHeader("Bank Services");
+        showMenu(3, 1);
+        setOption();
+
+        switch (getOption()) {
+            case 1 -> System.out.println("Checking Balance...");
+            case 2 -> System.out.println("Processing a transaction...");
+            default -> System.out.println("Invalid choice for Bank Services");
+        }
+    }
+
+    private static void createBank() {
+        showMenuHeader("Create New Bank");
+        System.out.print("Enter your Bank Name: ");
+        String bankName = input.nextLine();
+        Bank bank = new Bank(bankName);
+        banks.add(bank);
+        System.out.println("Bank '" + bankName + "' has been created successfully!");
+    }
+
+    private static void manageAccount(Account account) {
+        while (true) {
+            showMenuHeader("Account Menu");
+            showMenu(4);
+            setOption();
+
+            switch (getOption()) {
+                case 1 -> System.out.println(account.getAccountBalanceStatement());
+                case 2 -> performTransaction(account, new Deposit());
+                case 3 -> performTransaction(account, new Withdrawal());
+                case 4 -> performTransaction(account, new FundTransfer());
+                case 5 -> performTransaction(account, new Payment());
+                case 6 -> {
+                    System.out.println("Logging out...");
+                    return;
+                }
+                default -> System.out.println("Invalid option!");
+            }
+        }
+    }
+
+    private static void performTransaction(Account account, Transaction transaction) {
+        System.out.print("Enter Amount: ");
+        double amount = input.nextDouble();
+        input.nextLine(); // Consume newline
+
+        if (transaction instanceof Deposit deposit) {
+            deposit.execute(account, amount);
+        } else if (transaction instanceof Withdrawal withdrawal) {
+            withdrawal.execute(account, amount);
+        } else if (transaction instanceof FundTransfer transfer) {
+            System.out.print("Enter Target Account Number: ");
+            String targetAccNum = input.nextLine();
+            Account targetAccount = findAccount(targetAccNum);
+
+            if (targetAccount != null) {
+                transfer.execute(account, targetAccount, amount);
+            } else {
+                System.out.println("Target account not found!");
+            }
+        } else if (transaction instanceof Payment payment) {
+            payment.execute(account, amount);
+        }
+    }
+
+    private static Account findAccount(String accNumber) {
+        for (Account acc : accounts) {
+            if (acc.getAccountNumber().equals(accNumber)) {
+                return acc;
+            }
+        }
+        return null;
+    }
+
+    public static void showMenu(int menuIdx) {
         showMenu(menuIdx, 1);
     }
 
-    /**
-     * Show menu based on index given. <br>
-     * Refer to Menu enum for more info about menu indexes.
-     * 
-     * @param menuIdx Main.Menu index to be shown
-     * @param inlineTexts Number of menu options in a single line. Set to 1 if you only want a
-     *        single menu option every line.
-     * @see Menu
-     */
-    public static void showMenu(int menuIdx, int inlineTexts)
-    {
+    public static void showMenu(int menuIdx, int inlineTexts) {
         String[] menu = Menu.getMenuOptions(menuIdx);
-        if (menu == null)
-        {
+        if (menu == null) {
             System.out.println("Invalid menu index given!");
+            return;
         }
-        else
-        {
-            String space = inlineTexts == 0 ? "" : "%-20s";
-            String fmt = "[%d] " + space;
-            int count = 0;
-            for (String s : menu)
-            {
-                count++;
-                System.out.printf(fmt, count, s);
-                if (count % inlineTexts == 0)
-                {
-                    System.out.println();
-                }
+
+        String fmt = "[%d] %-20s";
+        int count = 0;
+        for (String s : menu) {
+            count++;
+            System.out.printf(fmt, count, s);
+            if (count % inlineTexts == 0) {
+                System.out.println();
             }
         }
     }
 
-    /**
-     * Prompt some input to the user. Only receives on non-space containing String. This string can
-     * then be parsed into targeted data type using DataTypeWrapper.parse() method.
-     * 
-     * @param phrase Prompt to the user.
-     * @param inlineInput A flag to ask if the input is just one entire String or receive an entire
-     *        line input. <br>
-     *        Set to <b>true</b> if receiving only one String input without spaces. <br>
-     *        Set to <b>false</b> if receiving an entire line of String input.
-     * @return Value of the user's input.
-     * @see Field#setFieldValue(String, boolean) How prompt is utilized in Field.
-     */
-    public static String prompt(String phrase, boolean inlineInput)
-    {
-        System.out.print(phrase);
-        if (inlineInput)
-        {
-            String val = input.next();
-            input.nextLine();
-            return val;
-        }
-        return input.nextLine();
-    }
-
-    /**
-     * Prompts user to set an option based on menu outputted.
-     * 
-     * @throws NumberFormatException May happen if the user attempts to input something other than
-     *         numbers.
-     */
-    public static void setOption() throws NumberFormatException
-    {
+    public static void setOption() {
         option.setFieldValue("Select an option: ");
     }
 
-    /**
-     * @return Recently inputted option by the user.
-     */
-    public static int getOption()
-    {
-        return Main.option.getFieldValue();
+    public static int getOption() {
+        return option.getFieldValue();
     }
 
-    /**
-     * Used for printing the header whenever a new menu is accessed.
-     * 
-     * @param menuTitle Title of the menu to be outputted.
-     */
-    public static void showMenuHeader(String menuTitle)
-    {
+    public static void showMenuHeader(String menuTitle) {
         System.out.printf("<---- %s ----->\n", menuTitle);
     }
 }
