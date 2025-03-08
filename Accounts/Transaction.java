@@ -1,11 +1,14 @@
-package Accounts;
+package account;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
- * Class containing Transaction enums.
+ * Class containing Transaction details.
  */
 public class Transaction {
 
-    public enum Transactions {
+    public enum TransactionType {  // Renamed from `Transactions`
         Deposit,
         Withdraw,
         FundTransfer,
@@ -16,31 +19,44 @@ public class Transaction {
     /**
      * Account number that triggered this transaction.
      */
-    public String accountNumber;
+    private String accountNumber;
     /**
-     * Type of transcation that was triggered.
+     * Type of transaction that was triggered.
      */
-    public Transactions transactionType;
+    private TransactionType transactionType;
     /**
      * Description of the transaction.
      */
-    public String description;
+    private String description;
+    /**
+     * Timestamp of when the transaction occurred.
+     */
+    private String timestamp;
 
-    public Transaction(String accountNumber, Transactions transactionType, String description) {
+    public Transaction(String accountNumber, TransactionType transactionType, String description) {
         if (accountNumber == null || accountNumber.isEmpty()) {
             throw new IllegalArgumentException("Account number cannot be empty.");
         }
         this.accountNumber = accountNumber;
         this.transactionType = transactionType;
         this.description = description;
+        this.timestamp = getCurrentTimestamp(); // Store transaction timestamp
     }
 
     public String getAccountNumber() {
         return accountNumber;
     }
 
-    public Transactions getTransactionType() {
+    public TransactionType getTransactionType() {  // Updated return type
         return transactionType;
+    }
+
+    public String getDescription() {  // ✅ Added method
+        return description;
+    }
+
+    public String getTimestamp() {  // ✅ Added method
+        return timestamp;
     }
 
     public void setAccountNumber(String accountNumber) {
@@ -50,7 +66,7 @@ public class Transaction {
         this.accountNumber = accountNumber;
     }
 
-    public void setTransactionType(Transactions transactionType) {
+    public void setTransactionType(TransactionType transactionType) {  // Updated parameter type
         this.transactionType = transactionType;
     }
 
@@ -58,13 +74,19 @@ public class Transaction {
         this.description = description;
     }
 
+    private String getCurrentTimestamp() {  // ✅ Added method to get current date/time
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return now.format(formatter);
+    }
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Transaction{" +
                 "Account Number='" + accountNumber + '\'' +
                 ", Transaction Type=" + transactionType +
                 ", Description='" + description + '\'' +
+                ", Timestamp='" + timestamp + '\'' +
                 '}';
     }
 }
