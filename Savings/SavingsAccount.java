@@ -1,13 +1,17 @@
-public class SavingsAccount extends BankAccount {
+package Accounts;
+
+import Bank.Bank;
+
+public class SavingsAccount extends Account {
     private double interestRate; // Annual interest rate in percentage
     private int withdrawalLimit; // Number of withdrawals allowed per month
     private int withdrawalsThisMonth;
 
     // Constructor
-    public SavingsAccount(String accountNumber, String accountHolder, double balance, double interestRate, int withdrawalLimit) {
-        super(accountNumber, accountHolder, balance);
-        this.interestRate = interestRate;
-        this.withdrawalLimit = withdrawalLimit;
+    public SavingsAccount(Bank bank, String accountNumber, String accountHolder, double balance) {
+        super(bank, accountNumber, accountHolder, balance);
+        this.interestRate = 2.5; // Default interest rate
+        this.withdrawalLimit = 5; // Default monthly withdrawal limit
         this.withdrawalsThisMonth = 0;
     }
 
@@ -52,6 +56,17 @@ public class SavingsAccount extends BankAccount {
 
     public void setWithdrawalLimit(int withdrawalLimit) {
         this.withdrawalLimit = withdrawalLimit;
+    }
+
+    @Override
+    public String toString() {
+        return "SavingsAccount{" +
+                "Account Number='" + getAccountNumber() + '\'' +
+                ", Holder='" + getAccountHolder() + '\'' +
+                ", Balance=" + getBalance() +
+                ", Interest Rate=" + interestRate + "%" +
+                ", Withdrawals This Month=" + withdrawalsThisMonth +
+                "/" + withdrawalLimit + '}';
     }
 }
 
