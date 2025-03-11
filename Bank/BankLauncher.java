@@ -6,6 +6,7 @@ import Main.Main;
 import account.Account;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 public class BankLauncher {
     private static List<Bank> BANKS = new ArrayList<>();
@@ -45,6 +46,10 @@ public class BankLauncher {
         }
     }
 
+    public static boolean isLogged() {
+        return loggedBank != null;
+    }
+
     public static void bankLogin() {
         Main.showMenuHeader("Bank Login");
         Field<String, String> bankNameField = new Field<>("Bank Name", String.class, "", new Field.StringFieldValidator());
@@ -66,6 +71,15 @@ public class BankLauncher {
         System.out.println("Invalid credentials.");
     }
 
+    public static void setLogSession(Bank b) {
+        loggedBank = b;
+    }
+
+    public static void logout() {
+        System.out.println("Logging out...");
+        loggedBank = null;
+    }
+
     public static void bankMenu() {
         while (true) {
             Main.showMenuHeader("Bank Services");
@@ -75,7 +89,7 @@ public class BankLauncher {
             int option = Main.getOption();
             switch (option) {
                 case 1:
-                    loggedBank.displayAccounts();  // Matches Bank.java
+                    showAccounts();
                     break;
                 case 2:
                     newAccounts();
@@ -84,8 +98,7 @@ public class BankLauncher {
                     viewTransactions();
                     break;
                 case 4:
-                    System.out.println("Logging out...");
-                    loggedBank = null;
+                    logout();
                     return;
                 default:
                     System.out.println("Invalid choice.");
@@ -121,6 +134,25 @@ public class BankLauncher {
         System.out.println("Bank Created Successfully!");
     }
 
+    public static void addBank(Bank b) {
+        BANKS.add(b);
+    }
+
+    public static Bank getBank(Comparator<Bank> comparator, Bank bank) {
+        return BANKS.stream()
+                    .filter(b -> comparator.compare(b, bank) == 0)
+                    .findFirst()
+                    .orElse(null);
+    }
+
+    public static void showAccounts() {
+        if (loggedBank == null) {
+            System.out.println("No bank is logged in.");
+            return;
+        }
+        loggedBank.displayAccounts();
+    }
+
     public static void newAccounts() {
         if (loggedBank == null) {
             System.out.println("No bank is logged in.");
@@ -146,6 +178,20 @@ public class BankLauncher {
         Account newAccount = new Account(loggedBank, accountNumber, accountHolder, "N/A", "N/A", "1234"); // Dummy Email & PIN
         loggedBank.addNewAccount(newAccount);
         System.out.println("New Account Created!");
+    }
+
+    public static Account findAccount(String accountNum) {
+        for (Bank bank : BANKS) {
+            Account account = bank.getAccount(accountNum);
+            if (account != null) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    public static int bankSize() {
+        return BANKS.size();
     }
 
     public static void viewTransactions() {
