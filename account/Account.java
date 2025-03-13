@@ -3,13 +3,16 @@ package account;
 import Bank.Bank;
 import account.Transaction;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Account {
     protected Bank bank;
     protected String accountNumber;
-    protected String ownerFirstName, ownerLastName, ownerEmail;
+    protected String ownerFirstName;
+    protected String ownerLastName;
+    protected String ownerEmail;
     protected String pin;
-    protected ArrayList<Transaction> transactions;
+    protected List<Transaction> transactions;
 
     public Account(Bank bank, String accountNumber, String firstName, String lastName, String email, String pin) {
         this.bank = bank;
@@ -25,18 +28,18 @@ public abstract class Account {
         return ownerFirstName + " " + ownerLastName;
     }
 
-    public void addNewTransaction(String accountNumber, Transaction.TransactionType type, String description) {
+    public void addNewTransaction(Transaction.TransactionType type, String description) {
         Transaction newTransaction = new Transaction(accountNumber, type, description);
         transactions.add(newTransaction);
-
-        if (bank != null) {  // ✅ Fix: Ensure bank is not null before calling addTransaction()
-            bank.addTransaction(newTransaction); // Ensures transaction is also stored in `Bank`
+        if (bank != null) {
+            bank.addTransaction(newTransaction);
         }
     }
 
     public String getTransactionInfo() {
-        if (transactions.isEmpty()) return "No transactions available.";
-
+        if (transactions.isEmpty()) {
+            return "No transactions available.";
+        }
         StringBuilder info = new StringBuilder("Transaction History:\n");
         for (Transaction t : transactions) {
             info.append(t.toString()).append("\n");
@@ -46,6 +49,10 @@ public abstract class Account {
 
     public String getAccountNumber() {
         return accountNumber;
+    }
+
+    public Bank getBank() {
+        return bank;
     }
 
     @Override
