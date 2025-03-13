@@ -3,8 +3,7 @@ package account;
 import Bank.Bank;
 import Savings.SavingsAccount;
 
-public class AccountLauncher {  // ✅ Fix: Removed parentheses ()
-
+public class AccountLauncher {
     private Account loggedAccount;
     private Bank associatedBank;
 
@@ -15,9 +14,9 @@ public class AccountLauncher {  // ✅ Fix: Removed parentheses ()
     // Handle account login
     public void accountLogin(String accountNumber, String pin) {
         // Normally, you'd check from a database or a list of accounts
-        if (accountNumber.equals("123456") && pin.equals("1234")) {
-            loggedAccount = new SavingsAccount(new Bank(1, "MyBank", "passcode", 50000, 10000, 20000),
-                    "123456", "John", "Doe", "john@example.com", "1234");  // ✅ Fix: Adjusted Bank constructor
+        if ("123456".equals(accountNumber) && "1234".equals(pin)) {
+            associatedBank = new Bank(1, "MyBank", "bankpass");
+            loggedAccount = new SavingsAccount(associatedBank, "123456", "John", "Doe", "john@example.com", "1234");
             System.out.println("Login successful!");
         } else {
             System.out.println("Invalid credentials.");
@@ -26,6 +25,7 @@ public class AccountLauncher {  // ✅ Fix: Removed parentheses ()
 
     public void logout() {
         loggedAccount = null;
+        System.out.println("Logged out successfully.");
     }
 
     public Account getLoggedAccount() {
