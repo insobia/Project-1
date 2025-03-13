@@ -15,7 +15,7 @@ public abstract class Account {
         this.bank = bank;
         this.accountNumber = accountNumber;
         this.ownerEmail = email;
-        this.ownerFirstName = firstName; // Fixed typo (was "firsName")
+        this.ownerFirstName = firstName;
         this.ownerLastName = lastName;
         this.pin = pin;
         this.transactions = new ArrayList<>();
@@ -28,13 +28,18 @@ public abstract class Account {
     public void addNewTransaction(String accountNumber, Transaction.TransactionType type, String description) {
         Transaction newTransaction = new Transaction(accountNumber, type, description);
         transactions.add(newTransaction);
-        bank.addTransaction(newTransaction); // Ensures transaction is also stored in `Bank`
+
+        if (bank != null) {  // ✅ Fix: Ensure bank is not null before calling addTransaction()
+            bank.addTransaction(newTransaction); // Ensures transaction is also stored in `Bank`
+        }
     }
 
     public String getTransactionInfo() {
+        if (transactions.isEmpty()) return "No transactions available.";
+
         StringBuilder info = new StringBuilder("Transaction History:\n");
         for (Transaction t : transactions) {
-            info.append(t.toString()).append("\n"); //Fixed missing semicolon
+            info.append(t.toString()).append("\n");
         }
         return info.toString();
     }
