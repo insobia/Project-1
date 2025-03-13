@@ -1,6 +1,7 @@
 package account;
 
 import Bank.Bank;
+import account.Transaction;
 import Savings.SavingsAccount;
 
 public class AccountLauncher {
@@ -11,12 +12,9 @@ public class AccountLauncher {
         return loggedAccount != null;
     }
 
-    // Handle account login
     public void accountLogin(String accountNumber, String pin) {
-        // Normally, you'd check from a database or a list of accounts
-        if ("123456".equals(accountNumber) && "1234".equals(pin)) {
-            associatedBank = new Bank(1, "MyBank", "bankpass");
-            loggedAccount = new SavingsAccount(associatedBank, "123456", "John", "Doe", "john@example.com", "1234");
+        if (accountNumber.equals("123456") && pin.equals("1234")) {
+            loggedAccount = new SavingsAccount(new Bank("MyBank"), "123456", "John", "Doe", "john@example.com", "1234", 1000.0);
             System.out.println("Login successful!");
         } else {
             System.out.println("Invalid credentials.");
@@ -25,7 +23,6 @@ public class AccountLauncher {
 
     public void logout() {
         loggedAccount = null;
-        System.out.println("Logged out successfully.");
     }
 
     public Account getLoggedAccount() {
