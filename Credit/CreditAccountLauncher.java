@@ -1,15 +1,29 @@
 package Credit;
 
-import account.Account;
+import Accounts.Account;  
+import account.Transaction;
 
+/**
+ * Launcher for Credit Account functionalities.
+ * Handles credit payments, recompenses, and retrieving logged-in accounts.
+ */
 public class CreditAccountLauncher {
 
-    // Initialize the credit account
+    private Account loggedAccount;  // Stores the currently logged-in account
+
+    /**
+     * Initializes the credit account system.
+     */
     public void creditAccountInit() {
         System.out.println("Initializing Credit Account...");
     }
 
-    // Process a credit payment for the given account
+    /**
+     * Processes a credit payment for the given account.
+     *
+     * @param account The account to process the payment for.
+     * @param amount  The amount to be paid.
+     */
     public void creditPaymentProcess(Account account, double amount) {
         if (account == null || amount <= 0) {
             System.out.println("Invalid payment request.");
@@ -19,7 +33,12 @@ public class CreditAccountLauncher {
         account.addNewTransaction(account.getAccountNumber(), Transaction.TransactionType.PAYMENT, "Credit Payment of " + amount);
     }
 
-    // Process recompense (refund or adjustment) for the credit account
+    /**
+     * Processes a recompense (loan repayment or adjustment) for the credit account.
+     *
+     * @param account The account to recompense.
+     * @param amount  The amount to be recompensed.
+     */
     public void creditRecompenseProcess(Account account, double amount) {
         if (account == null || amount <= 0) {
             System.out.println("Invalid recompense request.");
@@ -29,11 +48,43 @@ public class CreditAccountLauncher {
         account.addNewTransaction(account.getAccountNumber(), Transaction.TransactionType.RECOMPENSE, "Credit Recompense of " + amount);
     }
 
-    // Retrieve the currently logged-in credit account
+    /**
+     * Retrieves the currently logged-in credit account.
+     *
+     * @return The logged-in account or null if no account is logged in.
+     */
     public Account getLoggedAccount() {
-        // Assuming there is some authentication mechanism to retrieve the logged-in user
-        System.out.println("Fetching logged-in credit account...");
-        return new Account(); // Replace this with actual logic to get logged-in account
+        if (loggedAccount == null) {
+            System.out.println("No account is currently logged in.");
+            return null;
+        }
+        System.out.println("Fetching logged-in credit account: " + loggedAccount.getOwnerFullName());
+        return loggedAccount;
+    }
+
+    /**
+     * Logs in a credit account (dummy implementation for testing).
+     *
+     * @param account The account to be logged in.
+     */
+    public void login(Account account) {
+        if (account == null) {
+            System.out.println("Invalid account login attempt.");
+            return;
+        }
+        this.loggedAccount = account;
+        System.out.println("Successfully logged in: " + account.getOwnerFullName());
+    }
+
+    /**
+     * Logs out the currently logged-in credit account.
+     */
+    public void logout() {
+        if (loggedAccount == null) {
+            System.out.println("No account is logged in.");
+            return;
+        }
+        System.out.println("Logging out: " + loggedAccount.getOwnerFullName());
+        loggedAccount = null;
     }
 }
-
