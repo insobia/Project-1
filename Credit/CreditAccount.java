@@ -1,26 +1,23 @@
+package Credit;
+
+import Accounts.Payment;
+import Accounts.Recompense;
 import java.util.ArrayList;
 import java.util.List;
 
-// Payment Interface
-public interface Payment {
-    void processPayment(double amount, String targetAccountType);
-}
-
-// Recompense Interface
-public interface Recompense {
-    double calculateReward();
-}
-
-// CreditAccount Class
-public class CreditAccount implements Payment {
+/**
+ * Represents a credit account in the banking system.
+ * Implements Payment and Recompense interfaces.
+ */
+public class CreditAccount implements Payment, Recompense {
     private double loan;
-    private String bank;
-    private String accountNumber;
-    private String accountHolder;
-    private String branch;
-    private String type;
-    private String currency;
-    private List<String> transactionHistory;
+    private final String bank;
+    private final String accountNumber;
+    private final String accountHolder;
+    private final String branch;
+    private final String type;
+    private final String currency;
+    private final List<String> transactionHistory;
 
     // Constructor
     public CreditAccount(String bank, String accountNumber, String accountHolder, String branch, String type, String currency) {
@@ -71,6 +68,12 @@ public class CreditAccount implements Payment {
         }
     }
 
+    // Implement calculateReward from Recompense Interface
+    @Override
+    public double calculateReward() {
+        return loan * 0.02; // Example: 2% reward
+    }
+
     // Record Transactions
     private void recordTransaction(String transactionDetail) {
         transactionHistory.add(transactionDetail);
@@ -97,4 +100,4 @@ public class CreditAccount implements Payment {
                 ", currency='" + currency + '\'' +
                 '}';
     }
-          }
+}
