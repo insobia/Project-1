@@ -11,9 +11,12 @@ public class AccountLauncher {
         return loggedAccount != null;
     }
 
-    public void accountLogin(String accountNumber, String pin) {
-        if (accountNumber.equals("123456") && pin.equals("1234")) {
-            loggedAccount = new SavingsAccount(new Bank("MyBank"), "123456", "John", "Doe", "john@example.com", "1234", 0.0);
+    public void accountLogin(Bank bank, String accountNumber, String pin) {
+        Account foundAccount = bank.findAccount(accountNumber);
+
+        if (foundAccount != null && foundAccount.validatePin(pin)) {
+            loggedAccount = foundAccount;
+            associatedBank = bank;
             System.out.println("Login successful!");
         } else {
             System.out.println("Invalid credentials.");
