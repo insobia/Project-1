@@ -1,12 +1,19 @@
 package Accounts;
 
+/**
+ * Interface for recompensing loan amounts to the bank.
+ */
 public interface Recompense {
 
     /**
-     * Recompense some amount of money to the bank and reduce the value of loan recorded in this account.
-     * Must not be greater than the current credit.
-     * @param amount Amount of money to be recompensed.
-     * @return Flag if compensation was successful.
+     * Recompenses a specified amount to the bank, reducing the loan balance.
+     *
+     * Cannot proceed if:
+     * - The recompense amount exceeds the current outstanding loan.
+     * - The amount is negative or zero.
+     *
+     * @param amount The amount to be recompensed.
+     * @return `true` if the recompense is successful, `false` otherwise.
      */
-    public boolean recompense(double amount);
+    boolean recompense(double amount);
 }

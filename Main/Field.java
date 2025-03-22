@@ -1,11 +1,15 @@
 package Main;
 
+import java.util.Scanner;
+
 /**
- * A Field Class that is used for data input on times when you are supposed
- * to input something, like for example, Bank Name and Bank Passcode.
- * @param <T> Type of the field. Can be Double, String, Integer, and all other wrapper classes.
+ * A Field class used for user input in various banking operations.
+ *
+ * @param <T> Type of the field (e.g., String, Integer, Double, etc.).
+ * @param <E> Threshold type for validation.
  */
 public class Field<T, E> {
+    private static final Scanner scanner = new Scanner(System.in);
 
     private final Class<T> fieldType;
     private final String fieldName;
@@ -23,151 +27,110 @@ public class Field<T, E> {
     /**
      * Get the input value of this field.
      */
-    public T getFieldValue()
-    {
+    public T getFieldValue() {
         return this.fieldValue;
     }
 
     /**
-     * Set the value for this field. Can be validated using a field validator.
-     * <br>
-     * Only use this method if your field input is supposedly inline. In other words, your input
-     * will only receive one String.
-     * @param phrase Prompt used when asking for value for this field.
+     * Set the value for this field.
+     *
+     * @param phrase Prompt message shown to the user.
      */
-
-    public void setFieldValue(String phrase)
-    {
+    public void setFieldValue(String phrase) {
         this.setFieldValue(phrase, true);
     }
 
-
-
-
     /**
-     * Set the value for this field. Can be validated using a validator.
-     * @param phrase Prompt used when asking for value for this field.
-     * @param inlineInput A flag to ask if the input is just one entire String or receive an entire line input.
-     *                    <br>
-     *                    Set to true if receiving only one String input without spaces.
-     *                    <br>
-     *                    Set to false if receiving an entire line of String input.
-     * @throws ClassCastException Prompt value returns a string originally, and must be cast to other
-     * data or class types for proper input value. When the field is of type Double, Integer, or any other
-     * Number class, it may result to ClassCastException as Number is not a child nor parent of String.
-     * @throws NumberFormatException May happen when field is of type Double, Integer, or any number class,
-     * and user suddenly inputs a String that cannot be cast into double or Integer.,
+     * Set the value for this field with validation.
+     *
+     * @param phrase      Prompt message.
+     * @param inlineInput If true, reads only one word; if false, reads a full line.
      */
+    @SuppressWarnings("unchecked")
+    public void setFieldValue(String phrase, boolean inlineInput) {
+        String tempVal;
+        int attempts = 3;
 
-
-
-
-
-    public void setFieldValue(String phrase, boolean inlineInput)
-    throws ClassCastException, NumberFormatException {
-        String tempval = null;
-        while(true) {
+        while (attempts-- > 0) {
             try {
-                // Prompt user to input
-                tempval = Main.prompt(phrase, inlineInput);
-                // Cast String to a different type.
-                this.fieldValue = this.fieldType.cast(tempval);
+                tempVal = prompt(phrase, inlineInput);
+
+
+                if (fieldType == Double.class) {
+                    this.fieldValue = (T) Double.valueOf(tempVal);
+                } else if (fieldType == Integer.class) {
+                    this.fieldValue = (T) Integer.valueOf(tempVal);
+                } else if (fieldType == Boolean.class) {
+                    this.fieldValue = (T) Boolean.valueOf(tempVal);
+                } else if (fieldType == Float.class) {
+                    this.fieldValue = (T) Float.valueOf(tempVal);
+                } else if (fieldType == Long.class) {
+                    this.fieldValue = (T) Long.valueOf(tempVal);
+                } else {
+                    this.fieldValue = fieldType.cast(tempVal);
+                }
+
+            } catch (ClassCastException | NumberFormatException e) {
+                System.out.println("Invalid input format. Please enter a valid " + fieldType.getSimpleName() + " value.");
+                continue;
             }
-            // Happens when the field is of type Double, Integer, Number, etc.
-            catch(ClassCastException err) {
-                try {
-                    if(this.fieldType == Double.class) {
-                        this.fieldValue = (T) stringToDouble(tempval);
-                    }
-                    else if(this.fieldType == Integer.class) {
-                        this.fieldValue = (T) stringToInteger(tempval);
-                    }
-                }
-                // This is run whenever casting is impossible as input string cannot be cast into Integer or Double
-                catch(NumberFormatException err2) {
-                    //
-                }
-            }
-            finally {
-                // Precautionary measure especially when NumberFormatException happens...
-                if(this.fieldValue != null) {
-                    String result = this.fieldValidator.validate(this.fieldValue, threshold);
-                    if(result == null) break;
-                    else System.out.println(result);
-                }
-                else {
-                    System.out.println("Invalid input given!");
-                }
+
+
+            if (this.fieldValue != null) {
+                String validationResult = this.fieldValidator.validate(this.fieldValue, threshold);
+                if (validationResult == null) break;
+                System.out.println(validationResult);
+            } else {
+                System.out.println("Invalid input given!");
             }
         }
-    }
 
-    private Double stringToDouble(String value) {
-        return Double.parseDouble(value);
-    }
 
-    private Integer stringToInteger(String value) {
-        return Integer.parseInt(value);
-    }
-
-    /**
-     * A Field Validator class to compare if some double value passes some given threshold.
-     * Used for validation purposes.
-     */
-    public static class DoubleFieldValidator implements FieldValidator<Double, Double> {
-
-        @Override
-        public String validate(Double value, Double threshold) {
-            if(value < threshold) {
-                return "Field input must be greater or equal to: " + threshold;
-            }
-            return null;
+        if (attempts < 0) {
+            System.out.println("Too many invalid attempts. Cancelling input.");
+            this.fieldValue = null;
         }
     }
 
     /**
-     * A Field Validator class to compare if some integer value passes some given threshold.
-     * Used for validation purposes.
+     * Handles user input.
+     *
+     * @param phrase      Prompt to display.
+     * @param inlineInput If true, reads only one word; if false, reads a full line.
+     * @return The user input.
      */
+    private static String prompt(String phrase, boolean inlineInput) {
+        System.out.print(phrase + " ");
+        return inlineInput ? scanner.next() : scanner.nextLine();
+    }
+
+
     public static class IntegerFieldValidator implements FieldValidator<Integer, Integer> {
-
         @Override
         public String validate(Integer value, Integer threshold) {
-            if(value < threshold) {
-                return "Field input must be greater than or equal to: " + threshold;
-            }
-            return null;
+            return (value < threshold) ? "Value must be at least: " + threshold : null;
         }
     }
 
-    /**
-     * A comparator class to compare if some string value is not empty.
-     * Used for validation purposes.
-     */
-    public static class StringFieldValidator implements FieldValidator<String, String> {
+    public static class DoubleFieldValidator implements FieldValidator<Double, Double> {
+        @Override
+        public String validate(Double value, Double threshold) {
+            return (value < threshold) ? "Value must be at least: " + threshold : null;
+        }
+    }
 
+    public static class StringFieldValidator implements FieldValidator<String, String> {
         @Override
         public String validate(String value, String threshold) {
-            if(value.isEmpty()) {
-                return "Field cannot be empty!";
-            }
-            return null;
+            return (value.isEmpty()) ? "Field cannot be empty!" : null;
         }
     }
 
-    /**
-     * A comparator class tso compare if some string value's length is longer than
-     * some threshold.
-     * Used for validation purposes.
-     */
     public static class StringFieldLengthValidator implements FieldValidator<String, Integer> {
-
         @Override
         public String validate(String value, Integer threshold) {
-            if(value.length() < threshold) {
-                return "Field must have at least " + threshold + " characters";
-            }
-            return null;
+            return (value.length() < threshold) ? "Must be at least " + threshold + " characters long" : null;
         }
     }
 }
+

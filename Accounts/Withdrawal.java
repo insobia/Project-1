@@ -1,9 +1,15 @@
 package Accounts;
 
+/**
+ * Interface for withdrawing money from an account.
+ */
 public interface Withdrawal {
+
     /**
-     * Withdraws an amount of money using a given medium.
-     * @param amount Amount of money to be withdrawn from.
+     * Withdraws a specified amount from an account.
+     *
+     * @param amount The amount to be withdrawn.
+     * @return `true` if the withdrawal is successful, `false` otherwise.
      */
-    public boolean withdrawal(double amount);
+    boolean withdraw(double amount);
 }

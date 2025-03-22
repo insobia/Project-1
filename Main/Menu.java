@@ -5,32 +5,20 @@ package Main;
  */
 public enum Menu {
     /** Main menu options */
-    MainMenu(new String[]{"Accounts Login", "Bank Login", "Create New Bank", "Exit"}, 1),
-    
-    /** Account login menu */
-    AccountLogin(new String[]{"Accounts Login", "Go Back"}, 2),
-    
-    /** Bank login menu */
-    BankLogin(new String[]{"Login", "Go Back"}, 3),
-    
-    /** Bank menu after successful login */
-    BankMenu(new String[]{"Show Accounts", "New Accounts", "Log Out"}, 31),
-    
-    /** Menu for showing a particular set of accounts */
-    ShowAccounts(new String[]{"Credit Accounts", "Savings Accounts", "All Accounts", "Go Back"}, 32),
+    MAIN_MENU(new String[]{"Account Login", "Bank Login", "Create New Bank", "Exit"}, 1),
 
-    /** Account type selection when creating new accounts */
-    AccountTypeSelection(new String[]{"Credit Account", "Savings Account"}, 33),
-    
-    /** Credit account menu options */
-    CreditAccountMenu(new String[]{"Show Credits", "Pay", "Recompense", "Show Transactions", "Logout"}, 41),
-    
-    /** Savings account menu options */
-    SavingsAccountMenu(new String[]{"Show Balance", "Deposit", "Withdraw", "Fund Transfer", "Show Transactions", "Logout"}, 51);
+    /** Bank login menu */
+    BANK_LOGIN(new String[]{"Login", "Create Bank", "Exit"}, 2),
+
+    /** Bank menu after successful login */
+    BANK_MENU(new String[]{"Show Accounts", "New Accounts", "View Transactions", "Log Out"}, 3),
+
+    /** Account management menu */
+    ACCOUNT_MENU(new String[]{"Show Balance", "Deposit", "Withdraw", "Fund Transfer", "View Transactions", "Logout"}, 4);
 
     /** Stores menu options */
     private final String[] menuOptions;
-    
+
     /** Unique identifier for each menu */
     private final int menuIdx;
 
@@ -46,6 +34,13 @@ public enum Menu {
     }
 
     /**
+     * Retrieves the menu index.
+     */
+    public int getMenuIdx() {
+        return menuIdx;
+    }
+
+    /**
      * Retrieves the menu options based on the menu index.
      *
      * @param menuIdx The menu index to search for.
@@ -57,6 +52,28 @@ public enum Menu {
                 return menu.menuOptions;
             }
         }
-        return new String[] {}; // ✅ Returns an empty array instead of null
+        System.out.println("Menu not found!");
+        return new String[]{};
+    }
+
+
+    public void printMenu() {
+        System.out.println("\n--- " + this.name().replace("_", " ") + " ---");
+        for (int i = 0; i < menuOptions.length; i++) {
+            System.out.println("[" + (i + 1) + "] " + menuOptions[i]);
+        }
+    }
+
+    /**
+     * @param name    Name of the custom menu.
+     * @param options Menu options for the custom menu.
+     * @return A formatted string representing the custom menu.
+     */
+    public static String createCustomMenu(String name, String[] options) {
+        StringBuilder menuBuilder = new StringBuilder("\n--- " + name.toUpperCase() + " ---\n");
+        for (int i = 0; i < options.length; i++) {
+            menuBuilder.append("[").append(i + 1).append("] ").append(options[i]).append("\n");
+        }
+        return menuBuilder.toString();
     }
 }

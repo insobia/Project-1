@@ -1,15 +1,23 @@
 package Accounts;
 
+/**
+ * Interface for processing payments between accounts.
+ */
 public interface Payment {
 
     /**
-     * Pay a certain amount of money into a given account object.
-     * This is different from Fund Transfer as paying does not have any sort of
-     * processing fee.
-     * @param account Target account to pay money into.
-     * @param amount
-     * @throws IllegalAccountType Payment can only be processed between legal account types.
+     * Pays a certain amount of money into a given account.
+     *
+     * This is different from Fund Transfer, as payments do not have any processing fees.
+     *
+     * Cannot proceed if:
+     * - The source account has insufficient funds.
+     * - The recipient account is incompatible for payment.
+     *
+     * @param account The target account to receive the payment.
+     * @param amount The amount to be paid.
+     * @return `true` if the payment is successful, `false` otherwise.
+     * @throws IllegalAccountType If payment is attempted between incompatible account types.
      */
-    public boolean pay(Account account, double amount) throws IllegalAccountType;
-
+    boolean pay(Account account, double amount) throws IllegalAccountType;
 }
