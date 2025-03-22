@@ -1,78 +1,82 @@
-class SQLitePersistence implements DataPersistence {
-    public SQLitePersistence() {
-        setupDatabase(); 
+package Accounts;
+
+import Accounts.SavingsAccount;
+
+
+public class SavingsAccountLauncher {
+    private SavingsAccount loggedAccount;
+
+
+    public void savingsAccountInit() {
+        System.out.println("Initializing Savings Account...");
     }
 
-    private Connection connect() {
-        String url = "jdbc:sqlite:bank.db";
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            System.out.println("Connection Error: " + e.getMessage());
+
+    public void deposit(double amount) {
+        if (loggedAccount == null) {
+            System.out.println("No account is currently logged in.");
+            return;
         }
-        return conn;
-    }
-
-    private void setupDatabase() {  
-        String createAccounts = "CREATE TABLE IF NOT EXISTS accounts ("
-                                + "account_number TEXT PRIMARY KEY,"
-                                + "balance REAL NOT NULL);";
-        String createTransactions = "CREATE TABLE IF NOT EXISTS transactions ("
-                                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                + "account_number TEXT,"
-                                + "amount REAL,"
-                                + "type TEXT,"
-                                + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
-        try (Connection conn = connect();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(createAccounts);
-            stmt.execute(createTransactions);
-        } catch (SQLException e) {
-            System.out.println("Database Setup Error: " + e.getMessage());
+        if (amount > 0) {
+            loggedAccount.deposit(Math.round(amount * 100.0) / 100.0);
+            System.out.println("Deposited $" + String.format("%.2f", amount) + " successfully.");
+        } else {
+            System.out.println("Invalid deposit amount. Please enter a positive number.");
         }
     }
 
-    @Override
-    public void saveTransaction(String accountNumber, double amount, String type) {
-        String sql = "INSERT INTO transactions(account_number, amount, type) VALUES(?, ?, ?)";
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, accountNumber);
-            pstmt.setDouble(2, amount);
-            pstmt.setString(3, type);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Transaction Error: " + e.getMessage());
+
+    public void withdraw(double amount) {
+        if (loggedAccount == null) {
+            System.out.println("No account is currently logged in.");
+            return;
+        }
+        if (amount <= 0) {
+            System.out.println("Invalid withdrawal amount. Please enter a positive number.");
+            return;
+        }
+
+        if (loggedAccount.withdraw(Math.round(amount * 100.0) / 100.0)) {
+            System.out.println("Withdrawal of $" + String.format("%.2f", amount) + " successful.");
+        } else {
+            System.out.println("Withdrawal failed due to insufficient balance or limits.");
         }
     }
 
-    @Override
-    public void updateBalance(String accountNumber, double newBalance) {
-        String sql = "UPDATE accounts SET balance = ? WHERE account_number = ?";
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setDouble(1, newBalance);
-            pstmt.setString(2, accountNumber);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Update Balance Error: " + e.getMessage());
+
+    public double getBalance() {
+        if (loggedAccount == null) {
+            System.out.println("No account is currently logged in.");
+            return 0.0;
         }
+        double balance = loggedAccount.getBalance();
+        System.out.println("Current balance: $" + String.format("%.2f", balance));
+        return balance;
     }
 
-    @Override
-    public synchronized double getBalance(String accountNumber) { 
-        String sql = "SELECT balance FROM accounts WHERE account_number = ?";
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, accountNumber);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble("balance");
-            }
-        } catch (SQLException e) {
-            System.out.println("Get Balance Error: " + e.getMessage());
+
+    public void login(SavingsAccount account) {
+        if (account == null) {
+            System.out.println("Invalid account login attempt.");
+            return;
         }
-        return 0.0;
+        this.loggedAccount = account;
+        System.out.println("Successfully logged in: " + account.getOwnerFullName());
+    }
+
+    public void logout() {
+        if (loggedAccount == null) {
+            System.out.println("No account is logged in.");
+            return;
+        }
+
+        System.out.print("Are you sure you want to log out? (Y/N): ");
+        String confirm = System.console().readLine();
+        if (confirm.equalsIgnoreCase("Y")) {
+            System.out.println("Logging out: " + loggedAccount.getOwnerFullName());
+            loggedAccount = null;
+        } else {
+            System.out.println("Logout cancelled.");
+        }
     }
 }

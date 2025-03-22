@@ -84,7 +84,7 @@ public abstract class Account {
 
     public void recordTransaction(Transaction transaction) {
         transactions.add(transaction);
-        System.out.println("✔ Transaction recorded: " + transaction.getDetails());
+        System.out.println("Transaction recorded: " + transaction.getDetails());
     }
 
     public String getTransactionHistory() {
@@ -106,8 +106,21 @@ public abstract class Account {
         return info.toString().trim();
     }
 
-    /**
-     * Fix: Allows `fundTransfer()` to throw `IllegalAccountType`
-     */
+
     public abstract boolean fundTransfer(Account recipient, double amount) throws IllegalAccountType;
+
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Account Owner: %s %s\nAccount Number: %s\nBank: %s\nEmail: %s\nBalance: %.2f",
+                ownerFirstName,
+                ownerLastName,
+                accountNumber,
+                bank.getName(),
+                email,
+                balance
+        );
+    }
 }
+
